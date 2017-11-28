@@ -10,7 +10,7 @@ plugin editor to edit `.env`, so you can edit it directly from WordPress.
 
 ## Requirements
 * WordPress 4 or higher.
-* PHP 5.6 or higher.
+* PHP 7.0 or higher.
 * [Composer][2] (if compliling from source).
 
 ## Setup
