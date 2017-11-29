@@ -21,11 +21,14 @@ class config {
 	 * @return array[mixed]
 	 */
 	public function load() {
-		$config = [
+		$dFormat = (getenv('LUFORMAT') == "") ? "d/m/Y" : getenv('LUFORMAT'); 
+		$config = [  
 			'Mini'        => (getenv('MINI') == "")            ? false : filter_var(getenv("MINI"), FILTER_VALIDATE_BOOLEAN), 
+			'PluginDir'   => (getenv('PLUGIN_DIR') == "")      ? false : getenv('PLUGIN_DIR'),
 			'Version'     => (getenv('VERSION') == "")         ? false : getenv('VERSION'),
 			'Stage'       => (getenv('STAGE') == "")           ? false : getenv('STAGE'),
-			'LastUpdated' => (getenv('LASTUPDATE') == "")      ? false : Carbon::parse( getenv('LASTUPDATE') ),
+			'DateFormat'  => $dFormat,
+			'LastUpdated' => (getenv('LASTUPDATE') == "")     ? false : Carbon::createFromFormat( $dFormat, getenv('LASTUPDATE') ),
 			'FollowLinks' => (getenv('SITE_FOLLOW_URL') == "") ? false : filter_var(getenv("SITE_FOLLOW_URL"), FILTER_VALIDATE_BOOLEAN),
 			'Sites'       => []
 		];

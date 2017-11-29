@@ -21,46 +21,71 @@ class toolbar {
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 * @return void
 	 */
-	public function stager_customize_toolbar( $wp_admin_bar ) {
-		$arrInfo = [];
+	public function hook( $wp_admin_bar ) {
+		//die(var_dump( $this->pluginParameters( $this->config->PluginDir ) ));
+		$contents = [];
 
-		// Adds the .env details.
-		if ($this->config->Mini) {
-			($this->config->Version !== false) ? $arrInfo[] = "Version " . $this->config->Version : null;
-			($this->config->Stage   !== false) ? $arrInfo[] = $this->config->Stage                : null;
-			if (count($arrInfo) == 0) {
-				$arrInfo[] = "\u{2139}";
-			}
+		// Tracking a plugin? Else, load up the dotenv.
+		if ($this->config->PluginDir !== false && $this->pluginParameters( $this->config->PluginDir ) !== false ) {
+			$pluginParams = $this->pluginParameters( $this->config->PluginDir );
+			$contents[] = $pluginParams->Name;
+			$contents[] = 'Version: ' . $pluginParams->Version;
+			$contents[] = 'Last Updated: ' . $pluginParams->LastModified->format( $this->config->DateFormat );
 		} else {
-			$arrInfo[] = get_bloginfo('name'); 
-			($this->config->Version     !== false) ? $arrInfo[] = "Version " . $this->config->Version                            : null;
-			($this->config->Stage       !== false) ? $arrInfo[] = $this->config->Stage                                           : null;
-			($this->config->LastUpdated !== false) ? $arrInfo[] = "Last updated: " . $this->config->LastUpdated->format('d/m/Y') : null;
+			$contents[] = get_bloginfo('name');
+			($this->config->Version !== false)     ? $contents[] = 'Version: ' . $this->config->Version : null;
+			($this->config->LastUpdated !== false) ? $contents[] = 'Last Updated: ' . $this->config->LastUpdated->format( $this->config->DateFormat ) : null;
 		}
+		($this->config->Stage !== false) ? $contents[] = $this->config->Stage : null;
+		
+		$this->menuConstructor( 
+			$wp_admin_bar, 
+			$this->config->Mini, 
+			$contents, 
+			$this->config->Sites, 
+			$this->config->FollowLinks 
+		);
+	}
 
-		$strHeadline = implode(" - ", $arrInfo); 
+		/**
+	 * Constructs the WordPress admin bar option.
+	 * @param WP_Admin_Bar $wp_admin_bar
+	 * @param boolean $mini
+	 * @param array[string] $contents
+	 * @param array[string] $sites
+	 * @param boolean $matchURL
+	 * @return void Contents will be printed on the page
+	 */
+	private function menuConstructor($wp_admin_bar, $mini, $contents, $sites, $matchURL) {
+		$flattenedContents = implode(" - ", $contents); 
 
 		$wp_admin_bar->add_node([
 			'id'		=> 'version_no',
-			'title'		=> $strHeadline,
+			'title'		=> ($mini) ? "\u{2139}" : $flattenedContents,
 		]);
 
-		if ($this->config->Mini) {
-			if ($this->config->LastUpdated !== false) {
+		if ($mini) {
+			foreach ($contents as $key => $content) {
 				$wp_admin_bar->add_node([
-					'id'     => 'mini_details',
-					'title'  => 'Last updated: ' . $this->config->LastUpdated->format('d/m/Y'),
+					'id'     => "mini_details_{$key}",
+					'title'  => $content,
 					'parent' => 'version_no'
 				]);
 			}
+
+			$wp_admin_bar->add_node([
+				'id'     => "mini_details_seperator",
+				'title'  => '',
+				'parent' => 'version_no'
+			]);
 		}
 
-		foreach ($this->config->Sites as $site) {
+		foreach ($sites as $site) {
 			$wp_admin_bar->add_node([
 				'id'		=> "staging_site_{$site['Name']}",
 				'title'		=> $site['Name'],
 				'parent'    => 'version_no',
-				'href'      => ($this->config->FollowLinks) ? $this->getUrlParams($site['URL']) : $site['URL']
+				'href'      => ($matchURL) ? $this->getUrlParams($site['URL']) : $site['URL']
 			]);
 		}
 		
@@ -102,5 +127,34 @@ class toolbar {
 				return $url . '/' . $pagenow . '?' . http_build_query($_GET);
 			}	
 		}
+	}
+
+	/**
+	 * Gets plugin details from the specified folder.
+	 * @param string $folderName Folder name of tracked folder
+	 * @return object stdClass - Name, Version and LastModified (Carbon).
+	 */
+	private function pluginParameters($folderName) {
+		$file = realpath(dirname(__FILE__) . '/../') . "/{$folderName}/";
+
+		// Get the plugin file, which is either plugin.php or folder name.
+		if (file_exists( $file . "plugin.php" )) {
+			$file .= "plugin.php"; 
+		} elseif (file_exists( $file . "index.php" )) {
+			$file .= "index.php"; 
+		} elseif (file_exists( $file . "{$folderName}.php" )) {
+			$file .= "{$folderName}.php"; 
+		} else {
+			return false;
+		}
+		
+		$contents = get_file_data($file, [
+			'Name'    => 'Plugin Name',
+			'Version' => 'Version'
+		]);
+
+		$contents['LastModified'] = Carbon::createFromTimestamp( filemtime($file) );
+
+		return (object)$contents;
 	}
 }
