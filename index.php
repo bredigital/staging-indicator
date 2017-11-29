@@ -15,7 +15,7 @@ use Symfony\Component\Dotenv\Dotenv;
 use wpstagingindicator\config;
 use wpstagingindicator\toolbar;
 
-$toolbar = new toolbar( (new config())->load() );
+$toolbar = new toolbar( new config() );
 
 add_action( 'admin_bar_menu', [&$toolbar, 'hook'], 999 );
 add_filter( 'editable_extensions', function($editable_extensions) {

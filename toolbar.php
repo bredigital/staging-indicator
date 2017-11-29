@@ -12,7 +12,7 @@ use Carbon\Carbon;
  */
 class toolbar {
 	protected $config;
-	public function __construct($config) {
+	public function __construct(Config $config) {
 		$this->config = $config;
 	}
 	
@@ -22,7 +22,6 @@ class toolbar {
 	 * @return void
 	 */
 	public function hook( $wp_admin_bar ) {
-		//die(var_dump( $this->pluginParameters( $this->config->PluginDir ) ));
 		$contents = [];
 
 		// Tracking a plugin? Else, load up the dotenv.
