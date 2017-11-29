@@ -28,12 +28,12 @@ class toolbar {
 		if ($this->config->PluginDir !== false && $this->pluginParameters( $this->config->PluginDir ) !== false ) {
 			$pluginParams = $this->pluginParameters( $this->config->PluginDir );
 			$contents[] = $pluginParams->Name;
-			$contents[] = 'Version: ' . $pluginParams->Version;
-			$contents[] = 'Last Updated: ' . $pluginParams->LastModified->format( $this->config->DateFormat );
+			$contents[] = "Version: {$pluginParams->Version}";
+			$contents[] = "<abbr title='{$pluginParams->LastModified->format( $this->config->DateFormat )}'>Updated {$pluginParams->LastModified->diffForHumans()}</abbr>";
 		} else {
 			$contents[] = get_bloginfo('name');
-			($this->config->Version !== false)     ? $contents[] = 'Version: ' . $this->config->Version : null;
-			($this->config->LastUpdated !== false) ? $contents[] = 'Last Updated: ' . $this->config->LastUpdated->format( $this->config->DateFormat ) : null;
+			($this->config->Version !== false)     ? $contents[] = "Version: {$this->config->Version}" : null;
+			($this->config->LastUpdated !== false) ? $contents[] = "<abbr title='{$this->config->LastUpdated->format( $this->config->DateFormat )}'>Updated {$this->config->LastUpdated->diffForHumans()}</abbr>" : null;
 		}
 		($this->config->Stage !== false) ? $contents[] = $this->config->Stage : null;
 		
