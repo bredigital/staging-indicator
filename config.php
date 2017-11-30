@@ -26,6 +26,9 @@ class config {
 	 * User-friendly configuration for usage in PHP, from the dotenv file.
 	 */
 	public function __construct() {
+		if(!file_exists( __DIR__.'/config.env' ))
+			copy( __DIR__.'/config.env.example', __DIR__.'/config.env' );
+
 		$this->dotenv = new Dotenv();
 		$this->dotenv->load(__DIR__.'/config.env');
 
