@@ -41,7 +41,7 @@ class toolbar {
 			$wp_admin_bar, 
 			$this->config->Mini, 
 			$contents, 
-			$this->config->Sites, 
+			($this->config->ExternalSites !== false) ? $this->config->loadExternalSites( $this->config->ExternalSites ) : $this->config->Sites, 
 			$this->config->FollowLinks 
 		);
 	}
