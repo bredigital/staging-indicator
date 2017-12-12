@@ -71,7 +71,7 @@ class config {
 
 		if($cache) {
 			$cache_file = __DIR__.'/externalsites.json.cache';
-			if(file_exists($cache_file) && file_get_contents( $cache_file ) !== "") {
+			if( file_exists( $cache_file ) && filesize( $cache_file ) > 5 ) {
 				if(time() - filemtime($cache_file) > 1200) {
 					// Timeout of 20 minutes.
 					$cache = file_get_contents( $pluginUrl );

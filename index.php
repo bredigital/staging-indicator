@@ -2,7 +2,7 @@
 /*
 Plugin Name: Staging Indicator
 Description: Specifies the server and version of the development site.
-Version: 1.5.2
+Version: 1.5.3
 Author: BRE Digital
 Author URI: http://bre.digital/
 */
