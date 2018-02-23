@@ -8,8 +8,8 @@ To change the displayed values, edit the `config.env` file. This plugin adds sup
 `.env`, so you can edit it directly from WordPress.
 
 ## Requirements
-* WordPress 4 or higher.
-* PHP 7.0 or higher.
+* WordPress 3.8 or higher.
+* PHP 5.6 or higher.
 * [Composer][2] (if compliling from source).
 
 ## Setup

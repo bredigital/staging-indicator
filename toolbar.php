@@ -59,8 +59,8 @@ class toolbar {
 		$flattenedContents = implode(" - ", $contents); 
 
 		$wp_admin_bar->add_node([
-			'id'		=> 'version_no',
-			'title'		=> ($mini) ? "\u{2139}" : $flattenedContents,
+			'id'    => 'version_no',
+			'title'	=> ($mini) ? "<span class='ab-icon dashicons dashicons-editor-help'></span>" : $flattenedContents
 		]);
 
 		if ($mini) {

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Staging Indicator
 Description: Specifies the server and version of the development site.
-Version: 1.5.3
+Version: 1.5.4
 Author: BRE Digital
 Author URI: http://bre.digital/
 */
@@ -14,6 +14,16 @@ require_once __DIR__ . '/toolbar.php';
 use Symfony\Component\Dotenv\Dotenv;
 use wpstagingindicator\config;
 use wpstagingindicator\toolbar;
+
+add_filter( 'plugin_row_meta', function($links, $file) { 	
+	$url    = get_site_url();
+	$plugin = plugin_basename( __FILE__ );
+	if ( is_plugin_active($plugin) && $file == $plugin ) {
+		$links[] = "<a href='{$url}/wp-admin/plugin-editor.php?file=staging-indicator%2Fconfig.env&plugin=staging-indicator%2Findex.php'>Edit</a>";
+	}
+
+	return $links;
+}, 10, 2 );
 
 $configLoader = new config();
 
